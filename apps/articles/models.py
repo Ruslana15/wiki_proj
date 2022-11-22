@@ -9,6 +9,31 @@ from .utils import get_time
 
 User = get_user_model()
 
+class Category(models.Model):
+    title = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, primary_key=True, blank=True)
+    parent_category = models.ForeignKey(
+        verbose_name='Родительская категория',
+        to='self', 
+        on_delete=models.SET_NULL,
+        related_name='subcategories',
+        blank=True,
+        null=True
+         )
+    
+    def __str__(self) -> str:
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+
+
 class Article(models.Model):
     STATUS_CHOICES = (
         ('open', 'Open'),
@@ -37,6 +62,10 @@ class Article(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    category = models.ForeignKey(
+        to=Category, 
+        on_delete=models.CASCADE, 
+        related_name='articles')
 
     def __str__(self) -> str:
         return self.title

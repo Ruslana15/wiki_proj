@@ -15,7 +15,8 @@ from rest_framework.generics import ListAPIView
 from .models import (
     Article,
     Tag,
-    Comment
+    Comment,
+    Category
 )
 from .serializers import (
     ArticleListSerializer,
@@ -23,7 +24,8 @@ from .serializers import (
     ArticleImageSerializer,
     ArticleCreateSerializer,
     CommentSerializer,
-    TagSerializer
+    TagSerializer,
+    CategorySerializer
 )
 from .permissions import IsOwner
 
@@ -99,6 +101,9 @@ class TagViewSet(
             self.permission_classes = [IsAdminUser]
         return super().get_permissions()
 
+class CategoryViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 """  
 actions
 

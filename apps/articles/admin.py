@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Article, ArticleImage, Tag, ArticleImage
+from .models import Article, ArticleImage, Tag, ArticleImage, Category
 
 admin.site.register([Tag])
 
@@ -15,5 +15,5 @@ class ArticleAdmin(admin.ModelAdmin):
     inlines = [TabularInlineImages]
 
 admin.site.register(Article, ArticleAdmin)
-
+admin.site.register(Category)
 

@@ -7,7 +7,8 @@ from .models import (
     Article,
     Tag,
     Comment,
-    ArticleImage
+    ArticleImage,
+    Category
 )
 
 
@@ -93,4 +94,10 @@ class CurrentArticleDefault:
 
     def __call__(self, serializer_field):
         return serializer_field.context['article']
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
 
