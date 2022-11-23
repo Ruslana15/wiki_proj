@@ -5,6 +5,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters import rest_framework as rest_filter
 from rest_framework.generics import ListAPIView 
+from django.shortcuts import render
+
 # from rest_framework.generics import (
 #     ListAPIView,
 #     RetrieveAPIView,
@@ -74,6 +76,13 @@ class ArticleViewSet(ModelViewSet):
                 serializer.data, status=status.HTTP_201_CREATED
                 )
 
+    def retrieve(self, request, *args, **kwargs):
+        instance: Article = self.get_object() # Article
+        instance.views_count += 1
+        instance.save()
+        return super().retrieve(request, *args, **kwargs)
+
+
 class CommentCreateDeleteView(
     mixins.DestroyModelMixin,
     GenericViewSet
@@ -104,6 +113,13 @@ class TagViewSet(
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+class ArticleFilter(ModelViewSet):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+    filter_backends = [filters.SearchFilter, rest_filter.DjangoFilterBackend, filters.OrderingFilter]
+    search_fields = ['title']
+
 """  
 actions
 

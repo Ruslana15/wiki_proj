@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
 
     'apps.account',
-    'apps.articles'
+    'apps.articles',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
@@ -165,6 +166,7 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'USER_ID_FIELD': 'username',
     'AUTH_HEADER_TYPES': ('Bearer', 'Token'),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'

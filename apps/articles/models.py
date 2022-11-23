@@ -1,11 +1,13 @@
 from distutils.command.upload import upload
 from numbers import Real
+from warnings import filters
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from slugify import slugify
 from .utils import get_time
-
+import django_filters
+from rest_framework import filters
 
 User = get_user_model()
 
@@ -66,6 +68,7 @@ class Article(models.Model):
         to=Category, 
         on_delete=models.CASCADE, 
         related_name='articles')
+    views_count = models.IntegerField(default=0)
 
     def __str__(self) -> str:
         return self.title
@@ -119,5 +122,4 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment from {self.user.username} to {self.article.title}'
-
 

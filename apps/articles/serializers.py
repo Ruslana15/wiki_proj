@@ -32,7 +32,6 @@ class ArticleSerializer(serializers.ModelSerializer):
         ).data
         representation['carousel'] = ArticleImageSerializer(
             instance.article_images.all(), many=True).data
-        rating = instance.ratings.aggregate(Avg('rating'))['rating__avg']
         return representation
 
 class ArticleImageSerializer(serializers.ModelSerializer):
@@ -101,3 +100,7 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
+class ArticleFilterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Article
+        fields = ('title')
