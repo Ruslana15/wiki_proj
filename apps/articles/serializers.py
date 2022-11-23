@@ -1,7 +1,7 @@
-from xml.dom import ValidationErr
-from django.test import tag
 from rest_framework import serializers
 from django.db.models import Avg
+
+from apps.articles.permissions import IsStaff
 
 from .models import (
     Article,
@@ -48,6 +48,7 @@ class ArticleCreateSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(),
         write_only=True
     )
+    permission_classes = [IsStaff]
 
     class Meta:
         model = Article
@@ -104,3 +105,21 @@ class ArticleFilterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = ('title')
+
+class HomepageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Article
+        fields = ('user', 'title', 'image', 'slug', 'views_count')
+        # Article.objects.filter(max('views_count'))
+
+    # def to_representation(self, instance):
+    #     instance = super().to_representation(instance)
+    #     print(instance)
+    #     return instance
+
+
+class ArticleSerializerTop(serializers.ModelSerializer):
+
+    class Meta:
+        model = Article
+        fields = ('user_id', 'title', 'image', 'slug', 'views_count')
