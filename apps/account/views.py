@@ -13,12 +13,22 @@ from .serializers import (
     SetRestoredPasswordSerializer
     )
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie, vary_on_headers
+
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import viewsets
+
+
 
 User = get_user_model()
 
 
 class RegistrationView(APIView):
     @swagger_auto_schema(request_body=UserRegistrationSerializer)
+    @method_decorator(cache_page(60*60*2))
     def post(self, request: Request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -29,6 +39,7 @@ class RegistrationView(APIView):
             )
 
 class AccountActivationView(APIView):
+    @method_decorator(cache_page(60*60*2))
     def get(self, request, activation_code):
         user = User.objects.filter(activation_code=activation_code).first()
         if not user:
@@ -48,6 +59,7 @@ class AccountActivationView(APIView):
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @method_decorator(cache_page(60*60*2))
     def post(self, request: Request):
         serializer = PasswordChangeSerializer(data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
@@ -59,6 +71,8 @@ class ChangePasswordView(APIView):
 
 
 class RestorePasswordView(APIView):
+
+    @method_decorator(cache_page(60*60*2))
     def post(self, request: Request):
         serializer = RestorePasswordSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -70,6 +84,8 @@ class RestorePasswordView(APIView):
 
 
 class SetRestoredPasswordView(APIView):
+
+    @method_decorator(cache_page(60*60*2))
     def post(self, request: Request):
         serializer = SetRestoredPasswordSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -83,6 +99,7 @@ class SetRestoredPasswordView(APIView):
 class DeleteAccountView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @method_decorator(cache_page(60*60*2))
     def delete(self, request: Request):
         username = request.user.username
         User.objects.get(username=username).delete()

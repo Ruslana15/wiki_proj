@@ -6,6 +6,14 @@ from rest_framework.response import Response
 from django_filters import rest_framework as rest_filter
 from rest_framework.generics import ListAPIView 
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie, vary_on_headers
+
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import viewsets
+
 # from rest_framework.generics import (
 #     ListAPIView,
 #     RetrieveAPIView,
@@ -47,7 +55,7 @@ class ArticleViewSet(ModelViewSet):
     filterset_fields = ['tag']
     ordering_fields = ['created_at']
     
-
+    @method_decorator(cache_page(60*60*2))
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
@@ -109,7 +117,7 @@ class TagViewSet(
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = TagSerializer
-
+    @method_decorator(cache_page(60*60*2))
     def get_permissions(self):
         if self.action == 'create':
             self.permission_classes = [IsAuthenticated]
@@ -135,7 +143,7 @@ class HomepageViewSet(ModelViewSet):
     filterset_fields = ['tag']
     ordering_fields = ['created_at']
     
-
+    @method_decorator(cache_page(60*60*2))
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
